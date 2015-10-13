@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+<div id="modelLinks">
+  {% for key in model_keys %}
+    <a href="?model={{ key }}">{{ key }}</a>
+  {% endfor %}
+</div>
+<div id="renderedTemplate">
+  {{ record_rendered_template }}
+</div>
+</body>
+</html>
