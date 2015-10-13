@@ -214,7 +214,7 @@ class RecordView(object, ViewCallableMixin):
             return
         visited.add((app_label, model_name))
         for field in self._get_model_fields(app_label, model_name, False):
-            record_dict[','.join([app_label, model_name, field.name])] = str(getattr(instance, field.name))
+            record_dict[','.join([app_label, model_name, field.name])] = unicode((getattr(instance, field.name)))
 
         for field in sorted(self._get_model_fields(app_label, model_name, True), key=self._get_field_sort_key):
             if field.many_to_many:
@@ -222,7 +222,7 @@ class RecordView(object, ViewCallableMixin):
                 # referenced via ManyToMany has its own related fields
                 if hasattr(instance, field.name):
                     record_dict[','.join([app_label, model_name, field.name])] = ','.join(
-                        [str(instance) for instance in getattr(instance, field.name).all()]
+                        [unicode(instance) for instance in getattr(instance, field.name).all()]
                     )
             if field.many_to_one:
                 if hasattr(instance, field.name) and getattr(instance, field.name) is not None:
