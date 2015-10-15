@@ -1,12 +1,13 @@
 import csv
 import logging
 from decimal import Decimal
+from StringIO import StringIO
 
 from dateutil import parser
 from django.core.paginator import Paginator
 from django.db.models.loading import get_model
 from django.db import models
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.template import loader
 from django.utils.functional import cached_property
 from django.utils.lru_cache import lru_cache
@@ -280,7 +281,7 @@ class RecordView(object, ViewCallableMixin):
 
         return None
 
-    def generate_filter_object(self, field, raw_string):
+    def _generate_filter_object(self, field, raw_string):
         return self.FIELD_TYPE_MAPPING[type(field)][0](raw_string)
 
     def _apply_sort_keys(self, request, queryset):
@@ -314,8 +315,8 @@ class RecordView(object, ViewCallableMixin):
             for value in filter_keys_and_values[key]:
                 filter_join_string, filter_field = self._find_filter_join(key, value['specifier'])
 
-                filter_object = self.generate_filter_object(filter_field,
-                                                            value['value'])
+                filter_object = self._generate_filter_object(filter_field,
+                                                             value['value'])
                 queryset = queryset.filter(**{filter_join_string: filter_object})
 
         return queryset
@@ -382,6 +383,23 @@ class RecordView(object, ViewCallableMixin):
                                         'modelApp': self.model._meta.app_label,
                                         'modelName': self.model._meta.object_name})
 
+    def _get_csv_iterator(self, queryset):
+        NUMBER_RECORDS_PER_QUERY = 10 ** 4
+        paginator = Paginator(queryset, NUMBER_RECORDS_PER_QUERY)
+        strio = StringIO()
+        writer = csv.writer(strio)
+        writer.writerow(sorted(list(self._all_record_keys)))
+        yield strio.getvalue()
+        strio.close()
+        for i in xrange(1, paginator.num_pages + 1):
+            strio = StringIO()
+            writer = csv.writer(strio)
+            page = paginator.page(i)
+            records, keys = self._get_records(page.object_list)
+            writer.writerows(records)
+            yield strio.getvalue()
+            strio.close()
+
     def get_csv_response(self, request):
         # - is descending order, absence is ascending
         # format of sort keys: "app_name,model_name,field_name:-app_name,model_name,field_name"
@@ -392,17 +410,12 @@ class RecordView(object, ViewCallableMixin):
         except ValueError:
             return 'Filter value bad'
 
-        records, keys = self._get_records(queryset)
+        csv_iterator = self._get_csv_iterator(queryset)
 
-        response = HttpResponse(content_type='text/csv')
+        response = StreamingHttpResponse(csv_iterator, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="{}.csv"' \
             .format(','.join([self.model._meta.app_label,
                               self.model._meta.object_name]))
-
-        writer = csv.writer(response)
-        writer.writerow(keys)
-        for record in records:
-            writer.writerow(record)
         return response
 
     def get(self, request):
@@ -448,6 +461,8 @@ class RecordsView(object, ViewCallableMixin):
             return render(request, self.template_name, {'record_rendered_template': 'No model chosen',
                                                         'model_keys': self.record_views.keys()})
         record_view = self.record_views[request.GET['model']]
+        if 'csv' in request.GET:
+            return record_view.get_csv_response(request)
         record_rendered_template = record_view.get_html_content(request)
         return render(request, self.template_name, {'record_rendered_template': record_rendered_template,
                                                     'model_keys': self.record_views.keys()})
