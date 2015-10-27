@@ -435,6 +435,9 @@ class RecordView(object, ViewCallableMixin):
             page = paginator.page(i)
             records, keys = self._get_records(page.object_list)
             records, keys = self._narrow_to_chosen_columns(request, records, keys)
+            for record in records:
+                for j in xrange(len(record)):
+                    record[j] = record[j].encode('utf-8')
             writer.writerows(records)
             yield strio.getvalue()
             strio.close()
