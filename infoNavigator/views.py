@@ -60,6 +60,7 @@ class ViewCallableMixin():
 class RecordView(object, ViewCallableMixin):
     PAGE_SIZE = 25
     template_name = 'infoNavigator/default_record_template.html'
+    choose_columns_template_name = 'infoNavigator/choose_columns_template.html'
 
     def boolean_conversion_function(raw_str):
         raw_str = raw_str.lower()
@@ -351,6 +352,27 @@ class RecordView(object, ViewCallableMixin):
             })
         return keys_and_filters
 
+    def _narrow_to_chosen_columns(self, request, records, keys):
+        if 'chosen_columns' in request.GET:
+            index_of_chosen_columns = []
+            chosen_columns = set(request.GET['chosen_columns'].split('~'))
+            for i, column_name in enumerate(keys):
+                if column_name in chosen_columns:
+                    index_of_chosen_columns.append(i)
+
+            keys = [keys[i] for i in index_of_chosen_columns]
+
+            for i in xrange(len(records)):
+                current_record = records[i]
+                new_record = []
+                for j in index_of_chosen_columns:
+                    new_record.append(current_record[j])
+                records[i] = new_record
+
+            return records, keys
+        else:
+            return None, None
+
     # TODO: Only use the request object in here so the methods are more portable
     def get_html_content(self, request):
         # - is descending order, absence is ascending
@@ -366,6 +388,18 @@ class RecordView(object, ViewCallableMixin):
         paginator = Paginator(queryset, self.PAGE_SIZE)
         page = paginator.page(page_number)
         records, keys = self._get_records(page.object_list)
+        records, keys = self._narrow_to_chosen_columns(request, records, keys)
+
+        model_key = ','.join([self.model._meta.app_label,
+                              self.model._meta.object_name])
+        if records is None or keys is None:  # indicates that no columns have been chosen
+            return loader.render_to_string(self.choose_columns_template_name,
+                                           {'possible_keys': sorted(list(self._all_record_keys)),
+                                            'base_url': request.path,
+                                            'model': model_key,
+                                            'modelApp': self.model._meta.app_label,
+                                            'modelName': self.model._meta.object_name})
+
         keys_and_filters = self._combine_keys_with_filters(request, keys)
 
         return loader.render_to_string(self.template_name,
@@ -375,16 +409,16 @@ class RecordView(object, ViewCallableMixin):
                                         'paginator': paginator,
                                         'sort_keys': request.GET['sort_keys'] if 'sort_keys' in request.GET else '',
                                         'base_url': request.path,
-                                        'model': ','.join([self.model._meta.app_label,
-                                                           self.model._meta.object_name]),
+                                        'model': model_key,
                                         'filters': request.GET['filters'] if 'filters' in request.GET else '',
                                         'filter_param_string': request.GET[
                                             'filters'] if 'filters' in request.GET else '',
+                                        'chosen_columns': request.GET['chosen_columns'],
                                         # Two below allow record views to be distinguished if there are multiple on screen
                                         'modelApp': self.model._meta.app_label,
                                         'modelName': self.model._meta.object_name})
 
-    def _get_csv_iterator(self, queryset):
+    def _get_csv_iterator(self, queryset, request):
         NUMBER_RECORDS_PER_QUERY = 10 ** 3
         paginator = Paginator(queryset, NUMBER_RECORDS_PER_QUERY)
         strio = StringIO()
@@ -397,6 +431,7 @@ class RecordView(object, ViewCallableMixin):
             writer = csv.writer(strio)
             page = paginator.page(i)
             records, keys = self._get_records(page.object_list)
+            records, keys = self._narrow_to_chosen_columns(request, records, keys)
             writer.writerows(records)
             yield strio.getvalue()
             strio.close()
@@ -411,7 +446,7 @@ class RecordView(object, ViewCallableMixin):
         except ValueError:
             return 'Filter value bad'
 
-        csv_iterator = self._get_csv_iterator(queryset)
+        csv_iterator = self._get_csv_iterator(queryset, request)
 
         response = StreamingHttpResponse(csv_iterator, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="{}.csv"' \

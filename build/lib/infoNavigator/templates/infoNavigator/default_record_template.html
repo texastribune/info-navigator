@@ -4,8 +4,8 @@
       {% with key=key_and_filters.key %}
         <td id="{{ key }}" class="recordFieldHeader">
           <b>{{ key }}</b>
-          <a href="{{ base_url }}?sort_keys={{ sort_keys }}:{{ key_and_filters.key }}&model={{ model }}&filters={{ filter_param_string }}">Ascending</a>
-          <a href="{{ base_url }}?sort_keys={{ sort_keys }}:-{{ key_and_filters.key }}&model={{ model }}&filters={{ filter_param_string }}">Descending</a>
+          <a href="{{ base_url }}?sort_keys={{ sort_keys }}:{{ key_and_filters.key }}&model={{ model }}&chosen_columns={{ chosen_columns }}&filters={{ filter_param_string }}">Ascending</a>
+          <a href="{{ base_url }}?sort_keys={{ sort_keys }}:-{{ key_and_filters.key }}&model={{ model }}&chosen_columns={{ chosen_columns }}&filters={{ filter_param_string }}">Descending</a>
           {% for filter in key_and_filters.filters %}
             <div class="filterGroup">
               <label for="{{ key }}_filter_{{ forloop.counter0 }}">Filter: </label>
@@ -34,15 +34,15 @@
 </table>
 <p>Page {{ page.number }} of {{ paginator.num_pages }}</p>
 {% if page.has_previous %}
-  <a href="{{ base_url }}?pg={{ page.previous_page_number }}&sort_keys={{ sort_keys }}&model={{ model }}&filters={{ filter_param_string }}">Previous
+  <a href="{{ base_url }}?pg={{ page.previous_page_number }}&sort_keys={{ sort_keys }}&model={{ model }}&chosen_columns={{ chosen_columns }}&filters={{ filter_param_string }}">Previous
     Page</a>
 {% endif %}
 {% if page.has_next %}
-  <a href="{{ base_url }}?pg={{ page.next_page_number }}&sort_keys={{ sort_keys }}&model={{ model }}&filters={{ filter_param_string }}">Next
+  <a href="{{ base_url }}?pg={{ page.next_page_number }}&sort_keys={{ sort_keys }}&model={{ model }}&chosen_columns={{ chosen_columns }}&filters={{ filter_param_string }}">Next
     Page</a>
 {% endif %}
 <a href="{{ base_url }}?model={{ model }}">Clear Customization</a>
-<a href="{{ base_url }}?sort_keys={{ sort_keys }}&model={{ model }}&filters={{ filter_param_string }}&csv=true">Download as CSV</a>
+<a href="{{ base_url }}?sort_keys={{ sort_keys }}&model={{ model }}&filters={{ filter_param_string }}&chosen_columns={{ chosen_columns }}&csv=true">Download as CSV</a>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script>
   function doFilters() {
@@ -62,7 +62,7 @@
         filters.push([key, filter_value, filter_specifier].join(FILTER_INNER_SEPARATOR));
       }
     }
-    window.location.href = "{{ base_url }}?sort_keys={{ sort_keys }}&model={{ model }}&filters=" +
+    window.location.href = "{{ base_url }}?sort_keys={{ sort_keys }}&model={{ model }}&chosen_columns={{ chosen_columns }}&filters=" +
         filters.join(FILTER_OUTER_SEPARATOR);
   }
 

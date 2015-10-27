@@ -1,0 +1,26 @@
+{% for key in possible_keys %}
+  <div class="keyChoice">
+    <input type="checkbox" value="{{key}}"> {{ key }}
+  </div>
+{% endfor %}
+<button id="continueButton">Continue</button>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+  function submitChoices() {
+    var COLUMN_SEPARATOR = "~";
+    var choices = $(".keyChoice input");
+    var columns_to_include = [];
+    for (var i = 0; i < choices.length; i++) {
+      var choice = choices[i];
+      var choice_value = choice.value;
+      var will_be_included = choice.checked;
+      if (will_be_included) {
+        columns_to_include.push(choice_value);
+      }
+    }
+    window.location.href = "{{ base_url }}?model={{ model }}&chosen_columns=" +
+        columns_to_include.join(COLUMN_SEPARATOR);
+  }
+
+  $('#continueButton').click(submitChoices)
+</script>
