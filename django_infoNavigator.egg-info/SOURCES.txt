@@ -1,0 +1,13 @@
+LICENSE
+MANIFEST.in
+README.rst
+setup.py
+django_infoNavigator.egg-info/PKG-INFO
+django_infoNavigator.egg-info/SOURCES.txt
+django_infoNavigator.egg-info/dependency_links.txt
+django_infoNavigator.egg-info/top_level.txt
+infoNavigator/__init__.py
+infoNavigator/views.py
+infoNavigator/templates/infoNavigator/default_record_template.html
+infoNavigator/templates/infoNavigator/default_records_template.html
+infoNavigator/templates/infoNavigator/template_wrapper.html

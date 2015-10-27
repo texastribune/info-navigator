@@ -1,0 +1,48 @@
+Metadata-Version: 1.1
+Name: django-infoNavigator
+Version: 0.12
+Summary: A Django app to visualize your models and their connections as flat tables.
+Home-page: http://www.example.com/
+Author: Texas Tribune
+Author-email: tech@texastribune.org
+License: MIT License
+Description: ===
+        infoNavigator
+        ===
+        
+        infoNavigator takes your models and makes tables for all of them so that internal users can explore them
+        
+        Quick start
+        -----------
+        1. Add "infoNavigator" to your INSTALLED_APPS setting like this::
+            INSTALLED_APPS = (
+                ...
+                'polls',
+            )
+        
+        2. Get a url to all those models within your django project like this:
+            from infoNavigator.views import RecordsView
+            url(r'^navigate/', RecordsView(models.Keyword, models.SICCode, models.NAICSCode,
+                                           models.OSHA170Form, models.ReportingJurisdiction,
+                                           models.Accident, models.AccidentAbstract,
+                                           models.AccidentInjury, models.Inspection,
+                                           models.OptionalInspectionInfo, models.RelatedActivity,
+                                           models.StrategicCode, models.Violation,
+                                           models.ViolationEvent,
+                                           models.ViolationGeneralDuty).as_view()),
+        
+        3. Visit the url you set up
+Platform: UNKNOWN
+Classifier: Environment :: Web Environment
+Classifier: Framework :: Django
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.2
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content

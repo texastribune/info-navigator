@@ -282,7 +282,6 @@ class RecordView(object, ViewCallableMixin):
         return None
 
     def _generate_filter_object(self, field, raw_string):
-        # TODO: Account for the case where they want values that are null. In other words field__exact=None. currently no way to do this.
         return self.FIELD_TYPE_MAPPING[type(field)][0](raw_string)
 
     def _apply_sort_keys(self, request, queryset):
@@ -385,7 +384,7 @@ class RecordView(object, ViewCallableMixin):
                                         'modelName': self.model._meta.object_name})
 
     def _get_csv_iterator(self, queryset):
-        NUMBER_RECORDS_PER_QUERY = 10 ** 3
+        NUMBER_RECORDS_PER_QUERY = 10 ** 4
         paginator = Paginator(queryset, NUMBER_RECORDS_PER_QUERY)
         strio = StringIO()
         writer = csv.writer(strio)
