@@ -423,7 +423,10 @@ class RecordView(object, ViewCallableMixin):
         paginator = Paginator(queryset, NUMBER_RECORDS_PER_QUERY)
         strio = StringIO()
         writer = csv.writer(strio)
-        writer.writerow(sorted(list(self._all_record_keys)))
+        dummy_records, selected_keys = self._narrow_to_chosen_columns(request,
+                                                                      [],
+                                                                      sorted(list(self._all_record_keys)))
+        writer.writerow(selected_keys)
         yield strio.getvalue()
         strio.close()
         for i in xrange(1, paginator.num_pages + 1):
