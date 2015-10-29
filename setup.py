@@ -9,8 +9,8 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-infoNavigator',
-    version='0.13',
-    packages=['infoNavigator'],
+    version='0.14',
+    packages=['infoNavigator', 'six'],
     include_package_data=True,
     license='MIT License',
     description='A Django app to visualize your models and their connections as flat tables.',

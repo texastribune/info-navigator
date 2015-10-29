@@ -5,7 +5,6 @@ from StringIO import StringIO
 
 from dateutil import parser
 from django.core.paginator import Paginator
-from django.db.models.loading import get_model
 from django.db import models
 from django.http import HttpResponse, StreamingHttpResponse
 from django.template import loader
@@ -13,12 +12,15 @@ from django.utils.functional import cached_property
 from django.utils.lru_cache import lru_cache
 from django.shortcuts import render
 from django import http
+import six
+from django.apps import apps
+get_model = apps.get_model
+
 
 logger = logging.getLogger('django.request')
 
-
-# Create your views here.
-
+if six.PY3:
+    xrange = range
 
 # TODO: Not really sure if any of this is thread safe lol
 # TODO: see if there's a way to override view rather than do this
@@ -172,7 +174,7 @@ class RecordView(object, ViewCallableMixin):
 
         # sort the keys alphabetically and then change our records accordingly
         keys = sorted(list(keys))
-        for i in range(0, len(records)):
+        for i in xrange(0, len(records)):
             records[i] = [records[i][key] for key in keys]
 
         return records, keys
@@ -326,8 +328,7 @@ class RecordView(object, ViewCallableMixin):
     def _combine_keys_with_filters(self, request, keys):
         filter_keys_and_values = self._get_filter_keys_and_values(request)
         keys_and_filters = []
-        for i in xrange(len(keys)):
-            key_value = keys[i]
+        for key_value in keys:
             filters_list = []
             if key_value in filter_keys_and_values:
                 filter_values = filter_keys_and_values[key_value]
