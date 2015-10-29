@@ -2,7 +2,7 @@
 infoNavigator
 ===
 
-infoNavigator takes your models and makes tables for all of them so that internal users can explore them
+infoNavigator takes your models and makes denormalized tables for all of them so that internal users can explore them
 
 Quick start
 -----------
@@ -10,6 +10,7 @@ Quick start
     INSTALLED_APPS = (
         ...
         'polls',
+        'infoNavigator',
     )
 
 2. Get a url to all those models within your django project like this:
