@@ -10,7 +10,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 setup(
     name='django-infoNavigator',
     version='0.14',
-    packages=['infoNavigator', 'six'],
+    packages=['infoNavigator'],
     include_package_data=True,
     license='MIT License',
     description='A Django app to visualize your models and their connections as flat tables.',
@@ -35,6 +35,6 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
     install_requires=[
-        'python-dateutil'
+        'python-dateutil', 'six'
     ]
 )
