@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: django-infoNavigator
-Version: 0.15
+Version: 0.17
 Summary: A Django app to visualize your models and their connections as flat tables.
 Home-page: http://www.example.com/
 Author: Texas Tribune
@@ -10,14 +10,14 @@ Description: ===
         infoNavigator
         ===
         
-        infoNavigator takes your models and makes tables for all of them so that internal users can explore them
+        infoNavigator takes your models and makes denormalized tables for all of them so that internal users can explore them
         
         Quick start
         -----------
         1. Add "infoNavigator" to your INSTALLED_APPS setting like this::
             INSTALLED_APPS = (
                 ...
-                'polls',
+                'infoNavigator',
             )
         
         2. Get a url to all those models within your django project like this:

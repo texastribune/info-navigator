@@ -9,7 +9,6 @@ Quick start
 1. Add "infoNavigator" to your INSTALLED_APPS setting like this::
     INSTALLED_APPS = (
         ...
-        'polls',
         'infoNavigator',
     )
 
