@@ -5,6 +5,7 @@ setup.py
 django_infoNavigator.egg-info/PKG-INFO
 django_infoNavigator.egg-info/SOURCES.txt
 django_infoNavigator.egg-info/dependency_links.txt
+django_infoNavigator.egg-info/requires.txt
 django_infoNavigator.egg-info/top_level.txt
 infoNavigator/__init__.py
 infoNavigator/views.py
