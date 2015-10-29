@@ -10,7 +10,7 @@ Description: ===
         infoNavigator
         ===
         
-        infoNavigator takes your models and makes tables for all of them so that internal users can explore them
+        infoNavigator takes your models and makes a denormalized view of them so that internal users can explore them
         
         Quick start
         -----------
