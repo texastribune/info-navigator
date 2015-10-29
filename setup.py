@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-infoNavigator',
-    version='0.12',
+    version='0.13',
     packages=['infoNavigator'],
     include_package_data=True,
     license='MIT License',
