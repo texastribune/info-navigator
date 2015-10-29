@@ -38,7 +38,7 @@ class ViewCallableMixin():
         # defer to the error handler. Also defer to the error handler if the
         # request method isn't on the approved list.
         if request.method.lower() in self.http_method_names:
-            handler = getattr(self, request.method.lower())
+            handler = getattr(self, request.method.lower(), self.http_method_not_allowed)
         else:
             handler = self.http_method_not_allowed
 
